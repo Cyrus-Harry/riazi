@@ -1,0 +1,108 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Tahoma', 'Segoe UI', sans-serif;
+    background: #f5f9ff;
+    color: #1e2a3e;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background: #0b3b5f;
+    color: white;
+    padding: 1rem 2rem;
+}
+
+header h1 {
+    font-size: 1.6rem;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    transition: 0.2s;
+}
+
+nav a:hover, nav a.active {
+    background: #1f6e8c;
+}
+
+main {
+    flex: 1;
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    width: 100%;
+}
+
+.ask-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 28px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+h2 {
+    color: #0b3b5f;
+    margin-bottom: 0.5rem;
+}
+
+label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+button {
+    background: #1f6e8c;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 30px;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    width: 100%;
+}
+
+button:hover {
+    background: #0b3b5f;
+}
+
+#message {
+    margin-top: 1rem;
+    text-align: center;
+    font-weight: bold;
+}
+
+footer {
+    background: #dce5f0;
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ارتباط با مدیر | ریاضی‌یار</title>
+    <link rel="stylesheet" href="contact.css">
+    <script src="https://cdn.jsdelivr.net/npm/remote-storage@latest/remoteStorage.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>📧 ارتباط با مدیر سایت</h1>
+        <nav>
+            <a href="index.html">خانه</a>
+            <a href="math.html">فرمول‌ها</a>
+            <a href="questions.html">انجمن</a>
+            <a href="ask.html">سوال جدید</a>
+            <a href="contact.html" class="active">تماس با مدیر</a>
+            <a href="login.html">ورود</a>
+        </nav>
+    </header>
+    <main>
+        <div class="contact-container">
+            <h2>فرم ارسال پیام به مدیر</h2>
+            <form id="contactForm">
+                <label>نام شما:</label>
+                <input type="text" id="senderName" required>
+                <label>ایمیل (اختیاری):</label>
+                <input type="email" id="senderEmail">
+                <label>متن پیام:</label>
+                <textarea id="messageText" rows="5" required placeholder="پیام خود را بنویسید..."></textarea>
+                <button type="submit">ارسال پیام</button>
+            </form>
+            <div id="formMessage"></div>
+            <div id="adminMessages" style="display: none; margin-top: 2rem; border-top: 2px solid #ccc; padding-top: 1rem;">
+                <h3>📩 پیام‌های کاربران (فقط مدیر)</h3>
+                <div id="messagesList"></div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>© ۱۴۰۴ - سایت ریاضی‌یار | پاسخگویی حداکثر ۲۴ ساعت</p>
+    </footer>
+    <script src="contact.js"></script>
+</body>
+</html>

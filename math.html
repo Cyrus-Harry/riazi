@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فرمول‌های ریاضی | محاسبه‌گر چندمنظوره</title>
+    <link rel="stylesheet" href="math.css">
+</head>
+<body>
+    <header>
+        <h1>📐 سایت ریاضی‌یار | محاسبه‌گر هوشمند</h1>
+        <nav>
+            <a href="index.html">خانه</a>
+            <a href="math.html" class="active">فرمول‌ها</a>
+            <a href="questions.html">انجمن</a>
+            <a href="ask.html">سوال جدید</a>
+            <a href="contact.html">تماس با مدیر</a>
+            <a href="login.html">ورود</a>
+        </nav>
+    </header>
+
+    <main class="two-columns">
+        <!-- بخش فرمول‌ها (آموزش) -->
+        <aside class="formula-box">
+            <h2>📖 فرمول و روش محاسبه</h2>
+            <div id="formulaDisplay" class="formula-content">
+                یک موضوع را انتخاب کنید.
+            </div>
+        </aside>
+
+        <!-- بخش محاسبه‌گر -->
+        <section class="math-box">
+            <h2>🧮 محاسبه‌گر ریاضی</h2>
+            <p>موضوع را انتخاب کنید، مقادیر را وارد کنید و دکمه محاسبه را بزنید.</p>
+
+            <div class="form-select">
+                <label for="topic">موضوع ریاضی:</label>
+                <select id="topic">
+                    <option value="geometry">📐 هندسه (مساحت، محیط، حجم)</option>
+                    <option value="percent">٪ درصد</option>
+                    <option value="fraction">🔢 کسر به اعشار / ساده‌سازی</option>
+                    <option value="power">🔋 توان و جذر</option>
+                    <option value="equation">✖️ معادله ساده (ax + b = c)</option>
+                </select>
+            </div>
+
+            <!-- زیربخش برای هندسه (شکل) -->
+            <div id="geometryShapeDiv" style="margin: 10px 0;">
+                <label for="shape">نوع شکل هندسی:</label>
+                <select id="shape">
+                    <option value="square">مربع</option>
+                    <option value="rectangle">مستطیل</option>
+                    <option value="circle">دایره</option>
+                    <option value="triangle">مثلث قائم‌الزاویه</option>
+                    <option value="cube">مکعب</option>
+                    <option value="sphere">کره</option>
+                </select>
+            </div>
+
+            <div id="inputs-area" class="inputs-area">
+                <!-- ورودی‌ها داینامیک می‌شوند -->
+            </div>
+
+            <button id="calcBtn">محاسبه</button>
+
+            <div id="result" class="result">
+                نتیجه در اینجا نمایش داده می‌شود.
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© ۱۴۰۴ - سایت ریاضی‌یار | آموزش و محاسبه برای دوره ابتدایی و متوسطه</p>
+    </footer>
+
+    <script src="math.js"></script>
+</body>
+</html>

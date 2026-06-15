@@ -1,0 +1,145 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Tahoma', 'Segoe UI', sans-serif;
+    background: #f0f4fa;
+    color: #1e2a3e;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background: #0b3b5f;
+    color: white;
+    padding: 1rem 2rem;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+}
+
+nav a:hover, nav a.active {
+    background: #1f6e8c;
+}
+
+main {
+    flex: 1;
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    width: 100%;
+}
+
+.questions-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 28px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+h2 {
+    color: #0b3b5f;
+    margin-bottom: 1rem;
+}
+
+.questions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.question-card {
+    background: #f9f9ff;
+    border-right: 5px solid #1f6e8c;
+    padding: 1rem;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.question-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #0b3b5f;
+}
+
+.question-meta {
+    font-size: 0.8rem;
+    color: gray;
+    margin: 5px 0;
+}
+
+.question-body {
+    margin: 10px 0;
+    background: #eef2f7;
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.answers-section {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed #ccc;
+}
+
+.answer-item {
+    background: #e0f0e8;
+    margin: 8px 0;
+    padding: 8px;
+    border-radius: 12px;
+}
+
+.answerer {
+    font-weight: bold;
+    color: #1f6e8c;
+}
+
+.add-answer {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.add-answer textarea {
+    width: 100%;
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    font-family: inherit;
+}
+
+.add-answer button {
+    background: #1f6e8c;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    width: fit-content;
+}
+
+.add-answer button:hover {
+    background: #0b3b5f;
+}
+
+footer {
+    background: #dce5f0;
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+}

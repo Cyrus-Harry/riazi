@@ -1,0 +1,174 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Tahoma', 'Segoe UI', sans-serif;
+    background: #f0f4fa;
+    color: #1e2a3e;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background: #0b3b5f;
+    color: white;
+    padding: 1rem 2rem;
+}
+
+header h1 {
+    font-size: 1.6rem;
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    transition: 0.2s;
+}
+
+nav a:hover, nav a.active {
+    background: #1f6e8c;
+}
+
+main {
+    flex: 1;
+    max-width: 1300px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.two-columns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+}
+
+.formula-box {
+    flex: 1;
+    min-width: 250px;
+    background: white;
+    border-radius: 28px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+.math-box {
+    flex: 2;
+    min-width: 280px;
+    background: white;
+    border-radius: 28px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+.formula-content {
+    background: #f9f3e0;
+    padding: 1rem;
+    border-radius: 20px;
+    font-family: 'Courier New', 'Segoe UI', monospace;
+    white-space: pre-wrap;
+    line-height: 2;
+    font-size: 1rem;
+    direction: ltr;
+    text-align: left;
+}
+
+h2 {
+    color: #0b3b5f;
+    margin-bottom: 0.8rem;
+    border-right: 5px solid #1f6e8c;
+    padding-right: 0.7rem;
+}
+
+.form-select {
+    margin: 1.5rem 0 1rem;
+}
+
+label {
+    font-weight: bold;
+    margin-left: 0.5rem;
+}
+
+select, input {
+    padding: 8px 12px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    font-family: inherit;
+}
+
+.inputs-area {
+    background: #eef2f7;
+    padding: 1rem;
+    border-radius: 20px;
+    margin: 1rem 0;
+}
+
+.inputs-area div {
+    margin-bottom: 0.8rem;
+}
+
+.inputs-area label {
+    display: inline-block;
+    width: 140px;
+}
+
+button {
+    background: #1f6e8c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    cursor: pointer;
+    margin: 0.5rem 0;
+}
+
+button:hover {
+    background: #0b3b5f;
+}
+
+.result {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #e0f0e8;
+    border-radius: 20px;
+    font-size: 1.1rem;
+    text-align: center;
+    font-weight: bold;
+}
+
+footer {
+    background: #dce5f0;
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+    font-size: 0.85rem;
+}
+
+@media (max-width: 800px) {
+    .two-columns {
+        flex-direction: column;
+    }
+    .inputs-area label {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    .inputs-area input {
+        width: 100%;
+    }
+}
