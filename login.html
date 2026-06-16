@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود به حساب | سایت ریاضی</title>
+    <link rel="stylesheet" href="login.css">
+    <script src="https://cdn.jsdelivr.net/npm/remote-storage@latest/remoteStorage.min.js"></script>
+</head>
+<body>
+    <div class="login-container">
+        <h2>ورود به سایت ریاضی‌یار</h2>
+        <form id="loginForm">
+            <label>نام کاربری:</label>
+            <input type="text" id="username" required>
+            <label>رمز عبور:</label>
+            <input type="password" id="password" required>
+            <div class="role-box">
+                <label><input type="radio" name="role" value="user" checked> عضو عادی</label>
+                <label><input type="radio" name="role" value="admin"> مدیر</label>
+            </div>
+            <button type="submit">ورود</button>
+        </form>
+        <!-- بخش نمایش خطاها و پیام‌های سیستم به جای آلرت‌های زشت -->
+        <div id="message" style="margin-top: 15px; text-align: center; font-weight: bold; min-height: 24px;"></div>
+        
+        <p>حساب ندارید؟ <a href="register.html">ثبت‌نام کنید</a></p>
+        <p><a href="index.html">بازگشت به خانه</a></p>
+    </div>
+    
+    <!-- لود کردن فایل کمکی API قبل از اسکریپت اصلی صفحه -->
+    <script src="api.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>
