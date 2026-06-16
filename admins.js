@@ -1,11 +1,53 @@
 // =====================================================
-// لیست دستی نام‌کاربری ادمین‌ها (مدیران سایت)
-// هر نام‌کاربری که در این آرایه باشد، هنگام ثبت‌نام نقش ادمین می‌گیرد.
+// لیست ادمین‌های سایت با نام کاربری و رمز عبور مخصوص
 // =====================================================
-const ADMIN_LIST = [
-    "admin",        // ادمین پیش‌فرض
-    "J",  // ادمین دوم (خودتان)
-    "kiomarth",
-    // "ali_admin",  // ادمین‌های دیگر را اینجا اضافه کنید
-    // "math_master"
+const ADMINS = [
+    { username: "admin", password: "123456" },
+    { username: "cyrus-harry", password: "admin123" },
+    // { username: "ali_admin", password: "ali789" },
+    // { username: "math_master", password: "math2024" }
 ];
+
+// =====================================================
+// تابع ثبت خودکار ادمین‌ها در دیتابیس JSONBin
+// =====================================================
+async function seedAdmins() {
+    try {
+        // 1. دریافت لیست کاربران از دیتابیس
+        const users = await fetchUsers(); // این تابع از api.js می‌آید
+        let changed = false;
+
+        // 2. بررسی هر ادمین در لیست
+        for (const admin of ADMINS) {
+            const exists = users.some(u => u.username === admin.username);
+            if (!exists) {
+                // اگر ادمین در دیتابیس نبود، اضافه کن
+                users.push({
+                    username: admin.username,
+                    password: admin.password,
+                    role: 'admin'
+                });
+                changed = true;
+                console.log(`✅ ادمین ${admin.username} به دیتابیس اضافه شد.`);
+            }
+        }
+
+        // 3. اگر تغییری ایجاد شده، دیتابیس را به‌روز کن
+        if (changed) {
+            await saveUsers(users); // این تابع از api.js می‌آید
+            console.log('✅ لیست ادمین‌ها با موفقیت در دیتابیس ثبت شد.');
+        } else {
+            console.log('ℹ️ همه ادمین‌ها قبلاً در دیتابیس وجود داشتند.');
+        }
+    } catch (error) {
+        console.error('❌ خطا در ثبت خودکار ادمین‌ها:', error);
+    }
+}
+
+// =====================================================
+// اجرای خودکار هنگام بارگذاری صفحه
+// =====================================================
+document.addEventListener('DOMContentLoaded', function() {
+    // با یک تأخیر کوتاه اجرا کن تا api.js کامل بارگذاری شود
+    setTimeout(seedAdmins, 500);
+});
