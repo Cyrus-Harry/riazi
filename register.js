@@ -13,6 +13,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     const password = document.getElementById('password').value.trim();
     const confirm = document.getElementById('confirmPassword').value.trim();
 
+    // اعتبارسنجی اولیه
     if (!username || !password) {
         msgDiv.innerHTML = '❌ لطفاً نام کاربری و رمز عبور را وارد کنید.';
         msgDiv.style.color = 'red';
@@ -36,7 +37,10 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     }
 
     try {
+        // دریافت لیست کاربران از دیتابیس
         let users = await fetchUsers();
+
+        // 1. بررسی تکراری بودن در دیتابیس
         if (users.some(u => u.username === username)) {
             msgDiv.innerHTML = '❌ این نام کاربری قبلاً ثبت شده است.';
             msgDiv.style.color = 'red';
@@ -45,15 +49,18 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             return;
         }
 
-        // ========== تغییر اصلی اینجا ==========
-        // بررسی می‌کنیم که آیا نام‌کاربری در لیست ادمین‌ها وجود دارد؟
-        let role = 'user';
-        if (ADMIN_LIST.includes(username)) {
-            role = 'admin';
+        // 2. بررسی تکراری بودن در لیست ادمین‌ها (حتی اگر در دیتابیس نباشد)
+        if (ADMINS.some(a => a.username === username)) {
+            msgDiv.innerHTML = '❌ این نام کاربری به عنوان ادمین رزرو شده است.';
+            msgDiv.style.color = 'red';
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
+            return;
         }
-        // ======================================
 
-        users.push({ username, password, role });
+        // ثبت کاربر جدید با نقش 'user'
+        const newUser = { username, password, role: 'user' };
+        users.push(newUser);
         await saveUsers(users);
 
         msgDiv.innerHTML = '✅ ثبت‌نام با موفقیت انجام شد! در حال انتقال به صفحه ورود...';
@@ -62,10 +69,11 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         setTimeout(() => {
             window.location.href = 'login.html';
         }, 1500);
+
     } catch (error) {
         msgDiv.innerHTML = '⚠️ خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.';
         msgDiv.style.color = 'orange';
-        console.error(error);
+        console.error('خطا:', error);
         submitBtn.innerText = originalText;
         submitBtn.disabled = false;
     }
