@@ -6,7 +6,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     const originalText = submitBtn.innerText;
     
     msgDiv.innerHTML = '';
-    submitBtn.innerText = '⏳ در حال ورود...';
+    submitBtn.innerText = '⏳ در حال بررسی...';
     submitBtn.disabled = true;
 
     const username = document.getElementById('username').value.trim();
@@ -22,8 +22,16 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     }
 
     try {
+        // ========== مرحله 1: مطمئن شویم ادمین‌ها در دیتابیس هستند ==========
+        submitBtn.innerText = '⏳ در حال هماه‌سازی با سرور...';
+        await seedAdmins(); // اجرای مجدد برای ثبت ادمین‌ها در صورت نیاز
+        // ====================================================================
+
+        // ========== مرحله 2: جستجوی کاربر ==========
+        submitBtn.innerText = '⏳ در حال ورود...';
         const users = await fetchUsers();
-        let user = users.find(u => u.username === username);
+        const user = users.find(u => u.username === username);
+        // ===========================================
 
         if (!user) {
             msgDiv.innerHTML = '❌ این نام کاربری ثبت نشده است.';
@@ -40,13 +48,6 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             submitBtn.disabled = false;
             return;
         }
-
-        // ========== تغییر اختیاری ==========
-        // اگر نام‌کاربری در لیست ادمین‌ها باشد، نقش او را اجباریاً ادمین کن (حتی اگر در دیتابیس user باشد)
-        if (ADMIN_LIST.includes(user.username)) {
-            user.role = 'admin';
-        }
-        // ===================================
 
         if (role === 'admin' && user.role !== 'admin') {
             msgDiv.innerHTML = '❌ شما مدیر نیستید. لطفاً گزینه «عضو عادی» را انتخاب کنید.';
@@ -76,7 +77,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     } catch (error) {
         msgDiv.innerHTML = '⚠️ خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.';
         msgDiv.style.color = 'orange';
-        console.error(error);
+        console.error('خطا در لاگین:', error);
         submitBtn.innerText = originalText;
         submitBtn.disabled = false;
     }
