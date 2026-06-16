@@ -13,7 +13,6 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     const password = document.getElementById('password').value.trim();
     const confirm = document.getElementById('confirmPassword').value.trim();
 
-    // اعتبارسنجی اولیه
     if (!username || !password) {
         msgDiv.innerHTML = '❌ لطفاً نام کاربری و رمز عبور را وارد کنید.';
         msgDiv.style.color = 'red';
@@ -37,10 +36,11 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     }
 
     try {
-        // دریافت لیست کاربران از دیتابیس
+        // هماهنگ‌سازی ادمین‌ها قبل از ثبت‌نام
+        await seedAdmins();
+        
         let users = await fetchUsers();
 
-        // 1. بررسی تکراری بودن در دیتابیس
         if (users.some(u => u.username === username)) {
             msgDiv.innerHTML = '❌ این نام کاربری قبلاً ثبت شده است.';
             msgDiv.style.color = 'red';
@@ -49,7 +49,6 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             return;
         }
 
-        // 2. بررسی تکراری بودن در لیست ادمین‌ها (حتی اگر در دیتابیس نباشد)
         if (ADMINS.some(a => a.username === username)) {
             msgDiv.innerHTML = '❌ این نام کاربری به عنوان ادمین رزرو شده است.';
             msgDiv.style.color = 'red';
@@ -58,7 +57,6 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             return;
         }
 
-        // ثبت کاربر جدید با نقش 'user'
         const newUser = { username, password, role: 'user' };
         users.push(newUser);
         await saveUsers(users);
