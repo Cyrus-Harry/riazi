@@ -3,25 +3,27 @@
 // =====================================================
 const ADMINS = [
     { username: "admin", password: "123456" },
-    { username: "kazem", password: "12345" },
+    { username: "cyrus-harry", password: "admin123" },
     // { username: "ali_admin", password: "ali789" },
-    // { username: "math_master", password: "math2024" }a
+    // { username: "math_master", password: "math2024" }
 ];
 
 // =====================================================
 // تابع ثبت خودکار ادمین‌ها در دیتابیس JSONBin
+// (این تابع به صورت سراسری در دسترس است)
 // =====================================================
 async function seedAdmins() {
     try {
+        console.log('🔄 در حال بررسی و ثبت ادمین‌ها در دیتابیس...');
+        
         // 1. دریافت لیست کاربران از دیتابیس
-        const users = await fetchUsers(); // این تابع از api.js می‌آید
+        const users = await fetchUsers();
         let changed = false;
 
         // 2. بررسی هر ادمین در لیست
         for (const admin of ADMINS) {
             const exists = users.some(u => u.username === admin.username);
             if (!exists) {
-                // اگر ادمین در دیتابیس نبود، اضافه کن
                 users.push({
                     username: admin.username,
                     password: admin.password,
@@ -34,13 +36,16 @@ async function seedAdmins() {
 
         // 3. اگر تغییری ایجاد شده، دیتابیس را به‌روز کن
         if (changed) {
-            await saveUsers(users); // این تابع از api.js می‌آید
+            await saveUsers(users);
             console.log('✅ لیست ادمین‌ها با موفقیت در دیتابیس ثبت شد.');
         } else {
             console.log('ℹ️ همه ادمین‌ها قبلاً در دیتابیس وجود داشتند.');
         }
+        
+        return true; // موفقیت
     } catch (error) {
         console.error('❌ خطا در ثبت خودکار ادمین‌ها:', error);
+        return false;
     }
 }
 
@@ -49,5 +54,7 @@ async function seedAdmins() {
 // =====================================================
 document.addEventListener('DOMContentLoaded', function() {
     // با یک تأخیر کوتاه اجرا کن تا api.js کامل بارگذاری شود
-    setTimeout(seedAdmins, 500);
+    setTimeout(async () => {
+        await seedAdmins();
+    }, 1000);
 });
