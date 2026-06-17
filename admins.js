@@ -5,6 +5,7 @@ const ADMINS = [
     { username: "admin", password: "123456" },
     { username: "cyrus-harry", password: "admin123" },
     { username: "harry", password: "1212" },
+    { username: "kamal", password: "12345" },
     // { username: "ali_admin", password: "ali789" },
     // { username: "math_master", password: "math2024" }
 ];
