@@ -1,9 +1,9 @@
 // فایل مرکزی برای مدیریت ارتباط با دیتابیس JSONBin
 // با این کار دیگر نیازی به تکرار آدرس‌ها و کلیدها در فایل‌های مختلف نیست!
 
-const API_KEY = "$2a$10$ZyhnY/TqvbbO/3oHeIIsYeHsogdxE8fnK8TsDM5qJTH6IZnH5m4uC";
-const BIN_ID_USERS = "6a2fc556da38895dfec29a7d";
-const BIN_ID_QUESTIONS = "6a2fc6adda38895dfec2a0ce";
+const API_KEY = "$2a$10$/5vpvMhVYT3akahPv1wWUOWQmg1ZunHHB2MAf.4QIPDRRrcpKwFRy";
+const BIN_ID_USERS = "6a323283da38895dfece25f2";
+const BIN_ID_QUESTIONS = "6a3232f2da38895dfece2755";
 
 // --- توابع مربوط به کاربران ---
 async function fetchUsers() {
