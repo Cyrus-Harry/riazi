@@ -13,10 +13,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
+    // ==============================================
+    // تابع بارگذاری سوالات با قابلیت پاسخ به پاسخ‌ها
+    // ==============================================
     async function loadQuestions() {
         container.innerHTML = '<p style="text-align:center;">🔄 در حال دریافت سوالات از سرور...</p>';
         try {
-            let questions = await fetchQuestions(); // فراخوانی از api.js مشترک
+            let questions = await fetchQuestions();
             if (!questions || questions.length === 0) {
                 container.innerHTML = '<p>هیچ سوالی نیست. اولین سوال را بپرسید.</p>';
                 return;
@@ -28,22 +31,41 @@ document.addEventListener('DOMContentLoaded', async function() {
                 card.className = 'question-card';
                 const answersDivId = `answers-${q.id}`;
 
+                // دکمه حذف سوال (برای مدیر یا صاحب سوال)
                 let deleteBtn = '';
                 if (isAdmin || (loggedUser && q.asker === loggedUser)) {
                     deleteBtn = `<button class="delete-q" data-id="${q.id}" style="background:#c0392b; color:white; border:none; border-radius:20px; padding:4px 12px; margin-right:10px; cursor:pointer;">🗑️ حذف سوال</button>`;
                 }
 
+                // ========== بخش پاسخ‌ها با قابلیت پاسخ به پاسخ ==========
                 let answersHtml = `
                     <div class="answers-section" style="margin-top:10px;">
-                        <button class="toggle-ans" data-id="${q.id}" style="background:#1f6e8c; color:white; border:none; padding:5px 12px; border-radius:15px; cursor:pointer;">📖 مشاهده پاسخ‌ها</button>
+                        <button class="toggle-ans" data-id="${q.id}" style="background:#1f6e8c; color:white; border:none; padding:5px 12px; border-radius:15px; cursor:pointer;">📖 مشاهده پاسخ‌ها (${q.answers.length})</button>
                         <div id="${answersDivId}" style="display:none; margin-top:10px;">
-                            <strong>پاسخ‌ها (${q.answers.length}):</strong>
-                            ${q.answers.map(a => `<div class="answer-item"><strong>${escapeHtml(a.answerer)}:</strong> ${escapeHtml(a.text)} <small>(${a.date})</small></div>`).join('')}
+                            <strong>پاسخ‌ها:</strong>
+                            ${q.answers.map(ans => `
+                                <div class="answer-item" style="margin-bottom:15px; border-bottom:1px dashed #ccc; padding-bottom:10px;">
+                                    <div><strong>${escapeHtml(ans.answerer)}:</strong> ${escapeHtml(ans.text)} <small>(${ans.date})</small></div>
+                                    
+                                    ${ans.replies && ans.replies.length > 0 ? ans.replies.map(reply => `
+                                        <div style="margin-right:20px; margin-top:5px; background:#f0f8ff; padding:5px 10px; border-radius:8px; border-right:3px solid #3498db;">
+                                            <strong>${escapeHtml(reply.answerer)}:</strong> ${escapeHtml(reply.text)} <small>(${reply.date})</small>
+                                        </div>
+                                    `).join('') : ''}
+                                    
+                                    <div style="margin-top:8px; display:flex; flex-wrap:wrap; gap:5px; align-items:center;">
+                                        <textarea id="reply-to-${ans.id}" rows="1" placeholder="پاسخ یا سوال جدید..." style="flex:1; min-width:150px; padding:5px; border-radius:8px; border:1px solid #ccc; font-family:inherit;"></textarea>
+                                        <button class="reply-to-answer" data-qid="${q.id}" data-aid="${ans.id}" style="padding:5px 12px; background:#3498db; color:white; border:none; border-radius:8px; cursor:pointer;">💬 پاسخ</button>
+                                    </div>
+                                </div>
+                            `).join('')}
                             ${q.answers.length === 0 ? '<p>هنوز پاسخی داده نشده است.</p>' : ''}
                         </div>
                     </div>
                 `;
+                // ======================================================
 
+                // دکمه پاسخ به سوال (فقط برای مدیر)
                 let replyBtn = '';
                 if (isAdmin) {
                     replyBtn = `<div style="margin-top:10px;"><textarea id="reply-${q.id}" rows="2" placeholder="پاسخ خود را بنویسید..." style="width:100%; padding:8px; border-radius:12px; border:1px solid #ccc; font-family:inherit;"></textarea><button class="reply-q" data-id="${q.id}" style="margin-top:5px; background:#2ecc71; color:white; border:none; border-radius:15px; padding:6px 12px; cursor:pointer;">✅ ارسال پاسخ</button></div>`;
@@ -53,6 +75,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                     replyBtn = `<p style="font-size:0.8rem; color:#7f8c8d; margin-top:10px;"><a href="login.html">وارد شوید</a> تا پاسخ دهید.</p>`;
                 }
 
+                // ساخت کارت سوال
                 card.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div class="question-title">${escapeHtml(q.title)}</div>
@@ -66,7 +89,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                 container.appendChild(card);
             }
 
-            // رویداد مشاهده پاسخ‌ها
+            // ==============================================
+            // رویدادها (دکمه‌ها)
+            // ==============================================
+
+            // 1. دکمه مشاهده/مخفی کردن پاسخ‌ها
             document.querySelectorAll('.toggle-ans').forEach(btn => {
                 btn.onclick = () => {
                     const id = btn.getAttribute('data-id');
@@ -76,12 +103,12 @@ document.addEventListener('DOMContentLoaded', async function() {
                         btn.textContent = '🙈 مخفی کردن پاسخ‌ها';
                     } else {
                         div.style.display = 'none';
-                        btn.textContent = '📖 مشاهده پاسخ‌ها';
+                        btn.textContent = `📖 مشاهده پاسخ‌ها (${div.querySelectorAll('.answer-item').length})`;
                     }
                 };
             });
 
-            // رویداد حذف سوال
+            // 2. دکمه حذف سوال
             document.querySelectorAll('.delete-q').forEach(btn => {
                 btn.onclick = async () => {
                     const id = parseInt(btn.getAttribute('data-id'));
@@ -99,7 +126,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 };
             });
 
-            // رویداد پاسخ دادن
+            // 3. دکمه پاسخ به سوال (فقط مدیر)
             document.querySelectorAll('.reply-q').forEach(btn => {
                 btn.onclick = async () => {
                     if (!isAdmin) {
@@ -116,59 +143,66 @@ document.addEventListener('DOMContentLoaded', async function() {
                     let questions = await fetchQuestions();
                     const idx = questions.findIndex(x => x.id === id);
                     if (idx === -1) return;
+                    
+                    // پاسخ جدید با قابلیت دریافت زیرپاسخ
                     questions[idx].answers.push({
+                        id: Date.now(),
                         text: answerText,
                         answerer: loggedUser,
-                        date: new Date().toLocaleString('fa-IR')
+                        date: new Date().toLocaleString('fa-IR'),
+                        replies: []  // ← اینجا آرایه خالی برای پاسخ‌های بعدی
                     });
                     await saveQuestions(questions);
                     loadQuestions();
                 };
             });
+
+            // 4. دکمه پاسخ به پاسخ (برای همه کاربران وارد شده)
+            document.querySelectorAll('.reply-to-answer').forEach(btn => {
+                btn.onclick = async () => {
+                    if (!loggedUser) {
+                        alert('برای نظر دادن باید وارد شوید.');
+                        return;
+                    }
+                    const questionId = parseInt(btn.getAttribute('data-qid'));
+                    const answerId = parseInt(btn.getAttribute('data-aid'));
+                    const textarea = document.getElementById(`reply-to-${answerId}`);
+                    const replyText = textarea.value.trim();
+                    if (!replyText) {
+                        alert('لطفاً متن خود را بنویسید.');
+                        return;
+                    }
+
+                    let questions = await fetchQuestions();
+                    const question = questions.find(q => q.id === questionId);
+                    if (!question) return;
+
+                    const answer = question.answers.find(a => a.id === answerId);
+                    if (!answer) return;
+
+                    // اگر آرایه replies وجود نداشت، بساز
+                    if (!answer.replies) answer.replies = [];
+
+                    answer.replies.push({
+                        id: Date.now(),
+                        text: replyText,
+                        answerer: loggedUser,
+                        date: new Date().toLocaleString('fa-IR')
+                    });
+
+                    await saveQuestions(questions);
+                    loadQuestions();
+                };
+            });
+
         } catch (err) {
             container.innerHTML = `<p style="color:red; text-align:center;">❌ خطا در بارگذاری اطلاعات از سرور.</p>`;
             console.error(err);
         }
     }
 
-    // سوالات نمونه (اگر دیتابیس خالی باشد)
-    async function seedSample() {
-        try {
-            let questions = await fetchQuestions();
-            if (!questions || questions.length === 0) {
-                const sample = [
-                    {
-                        id: 1001,
-                        title: "چگونه مساحت دایره را محاسبه کنم؟",
-                        body: "فرمول مساحت دایره چیست؟ لطفاً با مثال توضیح دهید.",
-                        asker: "علی_رضا",
-                        date: "۱۴۰۳/۱۱/۲۰ ۱۴:۳۰",
-                        answers: [{ text: "مساحت دایره = π × r². مثال: r=2 → مساحت ≈ 12.56", answerer: "مدیر سایت", date: "۱۴۰۳/۱۱/۲۰ ۱۵:۰۰" }]
-                    },
-                    {
-                        id: 1002,
-                        title: "نحوه حل معادله 2x + 3 = 7",
-                        body: "لطفاً قدم به قدم توضیح دهید.",
-                        asker: "سارا_خان",
-                        date: "۱۴۰۳/۱۱/۱۹ ۱۰:۱۵",
-                        answers: [{ text: "2x+3=7 → 2x=4 → x=2", answerer: "rezamath", date: "۱۴۰۳/۱۱/۱۹ ۱۱:۰۰" }]
-                    },
-                    {
-                        id: 1003,
-                        title: "فرمول محیط مثلث متساوی الاضلاع",
-                        body: "اگر ضلع مثلث ۵ باشد، محیط چقدر می‌شود؟",
-                        asker: "مهسا_احمدی",
-                        date: "۱۴۰۳/۱۱/۱۸ ۰۹:۴۵",
-                        answers: []
-                    }
-                ];
-                await saveQuestions(sample);
-            }
-        } catch (e) {
-            console.log("ورود اولیه سوالات نمونه با خطا مواجه شد یا دیتابیس پر است.");
-        }
-    }
-
-    await seedSample();
+    // ==============================================
+    // بارگذاری اولیه سوالات (بدون سوالات نمونه)
+    // ==============================================
     await loadQuestions();
 });
