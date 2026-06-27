@@ -1,15 +1,12 @@
 document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    const submitBtn = document.getElementById('loginBtn');
-    const btnText = submitBtn.querySelector('.btn-text');
-    const btnLoader = submitBtn.querySelector('.btn-loader');
+    const submitBtn = document.querySelector('#loginForm button[type="submit"]');
     const msgDiv = document.getElementById('message');
-
-    // آماده‌سازی
+    const originalText = submitBtn.innerText;
+    
     msgDiv.innerHTML = '';
-    btnText.textContent = 'در حال ورود...';
-    btnLoader.style.display = 'inline';
+    submitBtn.innerText = '⏳ در حال بررسی...';
     submitBtn.disabled = true;
 
     const username = document.getElementById('username').value.trim();
@@ -17,57 +14,71 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     const role = document.querySelector('input[name="role"]:checked').value;
 
     if (!username || !password) {
-        showNotification('❌ لطفاً نام کاربری و رمز عبور را وارد کنید.', 'error');
-        resetBtn();
+        msgDiv.innerHTML = '❌ لطفاً نام کاربری و رمز عبور را وارد کنید.';
+        msgDiv.style.color = 'red';
+        submitBtn.innerText = originalText;
+        submitBtn.disabled = false;
         return;
     }
 
     try {
-        // هماهنگ‌سازی ادمین‌ها
-        await seedAdmins();
+        // ========== مرحله 1: مطمئن شویم ادمین‌ها در دیتابیس هستند ==========
+        submitBtn.innerText = '⏳ در حال هماه‌سازی با سرور...';
+        await seedAdmins(); // اجرای مجدد برای ثبت ادمین‌ها در صورت نیاز
+        // ====================================================================
 
+        // ========== مرحله 2: جستجوی کاربر ==========
+        submitBtn.innerText = '⏳ در حال ورود...';
         const users = await fetchUsers();
         const user = users.find(u => u.username === username);
+        // ===========================================
 
         if (!user) {
-            showNotification('❌ این نام کاربری ثبت نشده است.', 'error');
-            resetBtn();
+            msgDiv.innerHTML = '❌ این نام کاربری ثبت نشده است.';
+            msgDiv.style.color = 'red';
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
             return;
         }
 
         if (user.password !== password) {
-            showNotification('❌ رمز عبور اشتباه است.', 'error');
-            resetBtn();
+            msgDiv.innerHTML = '❌ رمز عبور اشتباه است.';
+            msgDiv.style.color = 'red';
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
             return;
         }
 
         if (role === 'admin' && user.role !== 'admin') {
-            showNotification('❌ شما مدیر نیستید. گزینه عضو عادی را انتخاب کنید.', 'error');
-            resetBtn();
+            msgDiv.innerHTML = '❌ شما مدیر نیستید. لطفاً گزینه «عضو عادی» را انتخاب کنید.';
+            msgDiv.style.color = 'red';
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
             return;
         }
         if (role === 'user' && user.role === 'admin') {
-            showNotification('❌ شما مدیر هستید. گزینه مدیر را انتخاب کنید.', 'error');
-            resetBtn();
+            msgDiv.innerHTML = '❌ شما مدیر هستید. لطفاً گزینه «مدیر» را انتخاب کنید.';
+            msgDiv.style.color = 'red';
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
             return;
         }
 
         localStorage.setItem('loggedInUser', username);
         localStorage.setItem('isAdmin', role === 'admin');
-
-        showNotification(`✅ ورود موفق! خوش آمدید ${username}`, 'success');
-        btnText.textContent = '✅ موفق';
-        setTimeout(() => window.location.href = 'index.html', 1200);
+        
+        msgDiv.innerHTML = `✅ ورود موفق! خوش آمدید ${username}. در حال انتقال به خانه...`;
+        msgDiv.style.color = 'green';
+        
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1200);
 
     } catch (error) {
-        showNotification('⚠️ خطا در ارتباط با سرور. دوباره تلاش کنید.', 'warning');
-        console.error(error);
-        resetBtn();
-    }
-
-    function resetBtn() {
-        btnText.textContent = 'ورود';
-        btnLoader.style.display = 'none';
+        msgDiv.innerHTML = '⚠️ خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.';
+        msgDiv.style.color = 'orange';
+        console.error('خطا در لاگین:', error);
+        submitBtn.innerText = originalText;
         submitBtn.disabled = false;
     }
 });
