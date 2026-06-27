@@ -1,76 +1,26 @@
-// ===== سیستم نوتیفیکیشن =====
-function showNotification(message, type = 'info') {
-    const el = document.getElementById('notification');
-    if (!el) return;
-    el.textContent = message;
-    el.className = 'notification';
-    if (type) el.classList.add(type);
-    setTimeout(() => el.classList.add('show'), 10);
-    setTimeout(() => el.classList.remove('show'), 3500);
-}
-
-// ===== حالت تاریک =====
-function toggleTheme() {
-    const html = document.documentElement;
-    const current = html.getAttribute('data-theme');
-    const newTheme = current === 'dark' ? 'light' : 'dark';
-    html.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateThemeIcon(newTheme);
-    showNotification(newTheme === 'dark' ? '🌙 حالت تاریک فعال شد' : '☀️ حالت روشن فعال شد', 'success');
-}
-
-function updateThemeIcon(theme) {
-    const btn = document.getElementById('themeToggle');
-    if (!btn) return;
-    btn.innerHTML = theme === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-}
-
+// فقط برای نمایش وضعیت ورود در کنسول یا تغییر جزئی در صفحه اصلی (اختیاری)
 document.addEventListener('DOMContentLoaded', () => {
-    // بارگذاری تم ذخیره شده
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    updateThemeIcon(savedTheme);
-
-    // دکمه تغییر تم
-    const toggleBtn = document.getElementById('themeToggle');
-    if (toggleBtn) toggleBtn.addEventListener('click', toggleTheme);
-
-    // ===== پیام خوش‌آمدگویی =====
-    const loggedUser = localStorage.getItem('loggedInUser');
+    // بررسی می‌کنیم آیا کاربر قبلاً وارد شده یا خیر (با استفاده از localStorage ساده)
+    const loggedInUser = localStorage.getItem('loggedInUser');
     const isAdmin = localStorage.getItem('isAdmin') === 'true';
-
-    if (loggedUser) {
+    
+    if (loggedInUser) {
+        // می‌توانیم یک پیام خوش‌آمدگویی در کنسول بنویسیم یا در صفحه نمایش دهیم
+        console.log(`خوش برگشتی ${loggedInUser}${isAdmin ? ' (مدیر)' : ''}`);
+        
+        // اختیاری: اضافه کردن یک المان اعلان در هدر
         const header = document.querySelector('header');
         const welcomeDiv = document.createElement('div');
-        welcomeDiv.style.cssText = `
-            background: var(--accent);
-            padding: 6px 12px;
-            border-radius: 20px;
-            margin-top: 8px;
-            text-align: center;
-            font-size: 0.85rem;
-            color: white;
-            opacity: 0.9;
-        `;
-        welcomeDiv.innerText = `👋 خوش آمدی ${loggedUser}${isAdmin ? ' (مدیر)' : ''}`;
+        welcomeDiv.style.backgroundColor = '#1f6e8c';
+        welcomeDiv.style.padding = '5px';
+        welcomeDiv.style.borderRadius = '20px';
+        welcomeDiv.style.marginTop = '10px';
+        welcomeDiv.style.textAlign = 'center';
+        welcomeDiv.style.fontSize = '0.9rem';
+        welcomeDiv.innerText = `👋 خوش آمدی ${loggedInUser}${isAdmin ? ' (مدیر)' : ''}`;
         header.appendChild(welcomeDiv);
-        showNotification(`خوش برگشتی ${loggedUser}!`, 'success');
+    } else {
+        // می‌توانیم یک لینک سریع به لاگین نشان دهیم
+        console.log('کاربر مهمان - لطفاً وارد شوید');
     }
 });
-
-// ===== توابع کمکی برای تاریخ نسبی =====
-function timeAgo(dateString) {
-    const now = new Date();
-    const past = new Date(dateString);
-    const diffMs = now - past;
-    const diffMin = Math.floor(diffMs / 60000);
-    const diffHour = Math.floor(diffMs / 3600000);
-    const diffDay = Math.floor(diffMs / 86400000);
-
-    if (diffMin < 1) return 'لحظاتی پیش';
-    if (diffMin < 60) return `${diffMin} دقیقه پیش`;
-    if (diffHour < 24) return `${diffHour} ساعت پیش`;
-    if (diffDay < 7) return `${diffDay} روز پیش`;
-    return past.toLocaleDateString('fa-IR');
-}
