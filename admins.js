@@ -1,15 +1,8 @@
-// ============================================
-// لیست ادمین‌ها با رمز عبور
-// ============================================
 const ADMINS = [
     { username: "admin", password: "123456" },
     { username: "cyrus-harry", password: "admin123" },
-    // { username: "harry", password: "1212" },
 ];
 
-// ============================================
-// ثبت خودکار ادمین‌ها در دیتابیس
-// ============================================
 async function seedAdmins() {
     try {
         const users = await fetchUsers();
@@ -18,19 +11,18 @@ async function seedAdmins() {
             if (!users.some(u => u.username === admin.username)) {
                 users.push({ ...admin, role: 'admin' });
                 changed = true;
-                console.log(`✅ ادمین ${admin.username} اضافه شد.`);
+                console.log('✅ ادمین اضافه شد:', admin.username);
             }
         }
         if (changed) {
             await saveUsers(users);
-            console.log('✅ لیست ادمین‌ها به‌روز شد.');
+            console.log('✅ ادمین‌ها ذخیره شدند.');
         }
-    } catch (error) {
-        console.error('❌ seedAdmins:', error);
+    } catch (e) {
+        console.error('❌ خطا در seedAdmins:', e);
     }
 }
 
-// اجرا هنگام بارگذاری صفحه
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(seedAdmins, 500);
 });
