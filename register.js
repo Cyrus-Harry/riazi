@@ -1,12 +1,14 @@
 document.getElementById('registerForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    const submitBtn = document.querySelector('#registerForm button[type="submit"]');
+    const submitBtn = document.getElementById('registerBtn');
+    const btnText = submitBtn.querySelector('.btn-text');
+    const btnLoader = submitBtn.querySelector('.btn-loader');
     const msgDiv = document.getElementById('message');
-    const originalText = submitBtn.innerText;
-    
+
     msgDiv.innerHTML = '';
-    submitBtn.innerText = '⏳ در حال ثبت‌نام...';
+    btnText.textContent = 'در حال ثبت‌نام...';
+    btnLoader.style.display = 'inline';
     submitBtn.disabled = true;
 
     const username = document.getElementById('username').value.trim();
@@ -14,46 +16,34 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     const confirm = document.getElementById('confirmPassword').value.trim();
 
     if (!username || !password) {
-        msgDiv.innerHTML = '❌ لطفاً نام کاربری و رمز عبور را وارد کنید.';
-        msgDiv.style.color = 'red';
-        submitBtn.innerText = originalText;
-        submitBtn.disabled = false;
+        showNotification('❌ نام کاربری و رمز عبور را وارد کنید.', 'error');
+        resetBtn();
         return;
     }
     if (password !== confirm) {
-        msgDiv.innerHTML = '❌ رمز عبور و تکرار آن مطابقت ندارند.';
-        msgDiv.style.color = 'red';
-        submitBtn.innerText = originalText;
-        submitBtn.disabled = false;
+        showNotification('❌ رمز عبور و تکرار آن مطابقت ندارند.', 'error');
+        resetBtn();
         return;
     }
     if (password.length < 4) {
-        msgDiv.innerHTML = '❌ رمز عبور باید حداقل ۴ کاراکتر باشد.';
-        msgDiv.style.color = 'red';
-        submitBtn.innerText = originalText;
-        submitBtn.disabled = false;
+        showNotification('❌ رمز عبور باید حداقل ۴ کاراکتر باشد.', 'error');
+        resetBtn();
         return;
     }
 
     try {
-        // هماهنگ‌سازی ادمین‌ها قبل از ثبت‌نام
         await seedAdmins();
-        
         let users = await fetchUsers();
 
         if (users.some(u => u.username === username)) {
-            msgDiv.innerHTML = '❌ این نام کاربری قبلاً ثبت شده است.';
-            msgDiv.style.color = 'red';
-            submitBtn.innerText = originalText;
-            submitBtn.disabled = false;
+            showNotification('❌ این نام کاربری قبلاً ثبت شده است.', 'error');
+            resetBtn();
             return;
         }
 
         if (ADMINS.some(a => a.username === username)) {
-            msgDiv.innerHTML = '❌ این نام کاربری به عنوان ادمین رزرو شده است.';
-            msgDiv.style.color = 'red';
-            submitBtn.innerText = originalText;
-            submitBtn.disabled = false;
+            showNotification('❌ این نام کاربری به عنوان ادمین رزرو شده است.', 'error');
+            resetBtn();
             return;
         }
 
@@ -61,18 +51,19 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         users.push(newUser);
         await saveUsers(users);
 
-        msgDiv.innerHTML = '✅ ثبت‌نام با موفقیت انجام شد! در حال انتقال به صفحه ورود...';
-        msgDiv.style.color = 'green';
-        
-        setTimeout(() => {
-            window.location.href = 'login.html';
-        }, 1500);
+        showNotification('✅ ثبت‌نام موفق! در حال انتقال...', 'success');
+        btnText.textContent = '✅ موفق';
+        setTimeout(() => window.location.href = 'login.html', 1200);
 
     } catch (error) {
-        msgDiv.innerHTML = '⚠️ خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.';
-        msgDiv.style.color = 'orange';
-        console.error('خطا:', error);
-        submitBtn.innerText = originalText;
+        showNotification('⚠️ خطا در ارتباط با سرور.', 'warning');
+        console.error(error);
+        resetBtn();
+    }
+
+    function resetBtn() {
+        btnText.textContent = 'ثبت‌نام';
+        btnLoader.style.display = 'none';
         submitBtn.disabled = false;
     }
 });
