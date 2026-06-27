@@ -4,33 +4,33 @@ document.addEventListener('DOMContentLoaded', function() {
     const loggedUser = localStorage.getItem('loggedInUser');
 
     if (!loggedUser) {
-        msgDiv.innerHTML = '⚠️ برای پرسیدن سوال باید <a href="login.html">وارد شوید</a>';
-        msgDiv.style.color = '#e74c3c';
+        msgDiv.innerHTML = '⚠️ برای پرسیدن سوال باید ابتدا <a href="login.html">وارد شوید</a>.';
+        msgDiv.style.color = 'red';
         form.style.display = 'none';
         return;
     }
 
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
-        const submitBtn = document.getElementById('askBtn');
-        const btnText = submitBtn.querySelector('.btn-text');
-        const btnLoader = submitBtn.querySelector('.btn-loader');
 
-        btnText.textContent = 'در حال ثبت سوال...';
-        btnLoader.style.display = 'inline';
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerText;
+        submitBtn.innerText = '⏳ در حال ثبت سوال...';
         submitBtn.disabled = true;
-        msgDiv.innerHTML = '';
 
         const title = document.getElementById('questionTitle').value.trim();
         const body = document.getElementById('questionBody').value.trim();
 
         if (!title || !body) {
-            showNotification('❌ عنوان و متن سوال را پر کنید.', 'error');
-            resetBtn();
+            msgDiv.innerHTML = '❌ لطفاً عنوان و متن سوال را پر کنید.';
+            msgDiv.style.color = 'red';
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
             return;
         }
 
         try {
+            // فراخوانی تابع fetch مشترک دیتابیس سوالات از api.js
             let questions = await fetchQuestions();
             const newQuestion = {
                 id: Date.now(),
@@ -41,21 +41,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 answers: []
             };
             questions.unshift(newQuestion);
+            
+            // فراخوانی تابع ذخیره از api.js
             await saveQuestions(questions);
 
-            showNotification('✅ سوال شما با موفقیت ثبت شد!', 'success');
-            btnText.textContent = '✅ ثبت شد';
+            msgDiv.innerHTML = '✅ سوال شما با موفقیت ثبت شد. <a href="questions.html">مشاهده سوالات</a>';
+            msgDiv.style.color = 'green';
             form.reset();
-            setTimeout(() => window.location.href = 'questions.html', 1200);
         } catch (error) {
-            showNotification('❌ خطا در ارسال سوال. دوباره تلاش کنید.', 'error');
+            msgDiv.innerHTML = '❌ خطا در ارسال سوال. لطفاً دوباره تلاش کنید.';
+            msgDiv.style.color = 'red';
             console.error(error);
-            resetBtn();
-        }
-
-        function resetBtn() {
-            btnText.textContent = 'ارسال سوال';
-            btnLoader.style.display = 'none';
+        } finally {
+            submitBtn.innerText = originalText;
             submitBtn.disabled = false;
         }
     });
