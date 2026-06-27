@@ -3,38 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>انجمن | ریاضی‌یار</title>
+    <title>انجمن پرسش و پاسخ | ریاضی‌یار</title>
     <link rel="stylesheet" href="questions.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/remote-storage@latest/remoteStorage.min.js"></script>
 </head>
 <body>
     <header>
-        <div class="header-top">
-            <h1>📌 انجمن پرسش و پاسخ</h1>
-            <button id="themeToggle" class="theme-btn"><i class="fas fa-moon"></i></button>
-        </div>
+        <h1>📌 انجمن پرسش و پاسخ</h1>
         <nav>
             <a href="index.html">خانه</a>
             <a href="math.html">فرمول‌ها</a>
             <a href="questions.html" class="active">انجمن</a>
             <a href="ask.html">سوال جدید</a>
-            <a href="contact.html">تماس</a>
+            <a href="contact.html">تماس با مدیر</a>
             <a href="login.html">ورود</a>
         </nav>
     </header>
     <main>
         <div class="questions-container">
-            <div class="questions-header">
-                <h2>لیست تمام سوالات</h2>
-                <a href="ask.html" class="ask-btn"><i class="fas fa-plus"></i> سوال جدید</a>
+            <h2>لیست تمام سوالات</h2>
+            <div id="questionsList" class="questions-list">
+                <!-- سوالات داینامیک -->
             </div>
-            <div id="questionsList" class="questions-list"></div>
         </div>
     </main>
-    <footer><p>© ۱۴۰۴ - سایت ریاضی‌یار | مدیران می‌توانند پاسخ دهند</p></footer>
-    <div id="notification" class="notification"></div>
+    <footer>
+        <p>© ۱۴۰۴ - سایت ریاضی‌یار | مدیران می‌توانند پاسخ دهند</p>
+    </footer>
     <script src="api.js"></script>
-    <script src="admins.js"></script>
     <script src="questions.js"></script>
 </body>
 </html>
