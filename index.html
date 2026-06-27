@@ -5,17 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>خانه | سایت ریاضی</title>
     <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
     <header>
-        <h1>📐 سایت ریاضی‌یار</h1>
+        <div class="header-top">
+            <h1>📐 سایت ریاضی‌یار</h1>
+            <div class="header-actions">
+                <button id="themeToggle" class="theme-btn" title="تغییر تم">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
         <nav>
             <a href="index.html" class="active">خانه</a>
-            <a href="math.html">فرمول‌ها و محاسبه</a>
-            <a href="questions.html">انجمن پرسش و پاسخ</a>
-            <a href="ask.html">ثبت سوال جدید</a>
-            <a href="contact.html">ارتباط با مدیر</a>
-            <a href="login.html">ورود / ثبت‌نام</a>
+            <a href="math.html">فرمول‌ها</a>
+            <a href="questions.html">انجمن</a>
+            <a href="ask.html">سوال جدید</a>
+            <a href="contact.html">تماس</a>
+            <a href="login.html">ورود</a>
         </nav>
     </header>
 
@@ -45,8 +53,11 @@
     </main>
 
     <footer>
-        <p>سایت ریاضی‌یار | طراحی شده برای دانش‌آموزان </p>
+        <p>سایت ریاضی‌یار | طراحی شده برای دانش‌آموزان</p>
     </footer>
+
+    <!-- سیستم نوتیفیکیشن -->
+    <div id="notification" class="notification"></div>
 
     <script src="index.js"></script>
 </body>
