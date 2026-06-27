@@ -3,46 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ورود | سایت ریاضی</title>
+    <title>ورود به حساب | سایت ریاضی</title>
     <link rel="stylesheet" href="login.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/remote-storage@latest/remoteStorage.min.js"></script>
 </head>
 <body>
     <div class="login-container">
-        <div class="login-header">
-            <h2>ورود به سایت ریاضی‌یار</h2>
-            <button id="themeToggle" class="theme-btn" title="تغییر تم">
-                <i class="fas fa-moon"></i>
-            </button>
-        </div>
+        <h2>ورود به سایت ریاضی‌یار</h2>
         <form id="loginForm">
-            <div class="input-group">
-                <label>نام کاربری</label>
-                <input type="text" id="username" required placeholder="نام کاربری خود را وارد کنید">
-                <i class="fas fa-user input-icon"></i>
-            </div>
-            <div class="input-group">
-                <label>رمز عبور</label>
-                <input type="password" id="password" required placeholder="رمز عبور خود را وارد کنید">
-                <i class="fas fa-lock input-icon"></i>
-            </div>
+            <label>نام کاربری:</label>
+            <input type="text" id="username" required>
+            <label>رمز عبور:</label>
+            <input type="password" id="password" required>
             <div class="role-box">
                 <label><input type="radio" name="role" value="user" checked> عضو عادی</label>
                 <label><input type="radio" name="role" value="admin"> مدیر</label>
             </div>
-            <button type="submit" id="loginBtn">
-                <span class="btn-text">ورود</span>
-                <span class="btn-loader" style="display:none;"><i class="fas fa-spinner fa-spin"></i></span>
-            </button>
+            <button type="submit">ورود</button>
         </form>
-        <div id="message" class="form-message"></div>
+        <div id="message" style="margin-top: 15px; text-align: center; font-weight: bold; min-height: 24px;"></div>
+        
         <p>حساب ندارید؟ <a href="register.html">ثبت‌نام کنید</a></p>
         <p><a href="index.html">بازگشت به خانه</a></p>
     </div>
-
-    <div id="notification" class="notification"></div>
+    
     <script src="api.js"></script>
-    <script src="admins.js"></script>
+    <script src="admins.js"></script>   <!-- ← اضافه شده برای ثبت خودکار ادمین‌ها -->
     <script src="login.js"></script>
 </body>
 </html>
