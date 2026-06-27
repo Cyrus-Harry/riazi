@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ثبت سوال جدید | انجمن ریاضی</title>
+    <title>ثبت سوال | انجمن ریاضی</title>
     <link rel="stylesheet" href="ask.css">
-    <script src="https://cdn.jsdelivr.net/npm/remote-storage@latest/remoteStorage.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
     <header>
-        <h1>📝 ثبت سوال جدید</h1>
+        <div class="header-top">
+            <h1>📝 ثبت سوال جدید</h1>
+            <button id="themeToggle" class="theme-btn"><i class="fas fa-moon"></i></button>
+        </div>
         <nav>
             <a href="index.html">خانه</a>
             <a href="math.html">فرمول‌ها</a>
             <a href="questions.html">انجمن</a>
             <a href="ask.html" class="active">سوال جدید</a>
-            <a href="contact.html">تماس با مدیر</a>
+            <a href="contact.html">تماس</a>
             <a href="login.html">ورود</a>
         </nav>
     </header>
@@ -24,18 +27,24 @@
             <h2>سوال ریاضی خود را بپرسید</h2>
             <p>لطفاً عنوان و توضیحات سوال را وارد کنید.</p>
             <form id="askForm">
-                <label>عنوان سوال:</label>
-                <input type="text" id="questionTitle" required placeholder="مثال: نحوه محاسبه مساحت دایره">
-                <label>متن سوال (توضیحات):</label>
-                <textarea id="questionBody" rows="5" required placeholder="سوال خود را کامل بنویسید..."></textarea>
-                <button type="submit">ارسال سوال</button>
+                <div class="input-group">
+                    <label>عنوان سوال</label>
+                    <input type="text" id="questionTitle" required placeholder="مثال: نحوه محاسبه مساحت دایره">
+                </div>
+                <div class="input-group">
+                    <label>متن سوال</label>
+                    <textarea id="questionBody" rows="5" required placeholder="سوال خود را کامل بنویسید..."></textarea>
+                </div>
+                <button type="submit" id="askBtn">
+                    <span class="btn-text">ارسال سوال</span>
+                    <span class="btn-loader" style="display:none;"><i class="fas fa-spinner fa-spin"></i></span>
+                </button>
             </form>
-            <div id="message"></div>
+            <div id="message" class="form-message"></div>
         </div>
     </main>
-    <footer>
-        <p>© ۱۴۰۴ - سایت ریاضی‌یار | پرسش و پاسخ ریاضی</p>
-    </footer>
+    <footer><p>© ۱۴۰۴ - سایت ریاضی‌یار | پرسش و پاسخ ریاضی</p></footer>
+    <div id="notification" class="notification"></div>
     <script src="api.js"></script>
     <script src="ask.js"></script>
 </body>
