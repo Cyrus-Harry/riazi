@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
+    // ==============================================
+    // تابع بارگذاری سوالات با قابلیت پاسخ به پاسخ‌ها
+    // ==============================================
     async function loadQuestions() {
         container.innerHTML = '<p style="text-align:center;">🔄 در حال دریافت سوالات از سرور...</p>';
         try {
@@ -28,82 +31,69 @@ document.addEventListener('DOMContentLoaded', async function() {
                 card.className = 'question-card';
                 const answersDivId = `answers-${q.id}`;
 
-                // ---- دکمه حذف سوال (ادمین یا صاحب سوال) ----
+                // دکمه حذف سوال (برای مدیر یا صاحب سوال)
                 let deleteBtn = '';
                 if (isAdmin || (loggedUser && q.asker === loggedUser)) {
-                    deleteBtn = `<button class="delete-q" data-id="${q.id}" style="background:#c0392b;color:white;border:none;border-radius:20px;padding:4px 12px;margin-right:10px;cursor:pointer;">🗑️ حذف سوال</button>`;
+                    deleteBtn = `<button class="delete-q" data-id="${q.id}" style="background:#c0392b; color:white; border:none; border-radius:20px; padding:4px 12px; margin-right:10px; cursor:pointer;">🗑️ حذف سوال</button>`;
                 }
 
-                // ---- نمایش پاسخ‌ها (پاسخ برگزیده اول) ----
-                const allAnswers = q.answers || [];
-                const sortedAnswers = [...allAnswers].sort((a, b) => {
-                    if (a.isBest) return -1;
-                    if (b.isBest) return 1;
-                    return 0;
-                });
-
-                const answersHtml = `
+                // ========== بخش پاسخ‌ها با قابلیت پاسخ به پاسخ ==========
+                let answersHtml = `
                     <div class="answers-section" style="margin-top:10px;">
-                        <button class="toggle-ans" data-id="${q.id}" style="background:#1f6e8c;color:white;border:none;padding:5px 12px;border-radius:15px;cursor:pointer;">
-                            📖 مشاهده پاسخ‌ها (${allAnswers.length})
-                        </button>
-                        <div id="${answersDivId}" style="display:none;margin-top:10px;">
-                            ${sortedAnswers.length === 0
-                                ? '<p style="color:#888;padding:8px;">هنوز پاسخی داده نشده است.</p>'
-                                : sortedAnswers.map((a, idx) => {
-                                    const isBest = a.isBest === true;
-                                    // ایندکس اصلی در آرایه اصلی برای pick-best
-                                    const origIdx = allAnswers.findIndex(x => x.answerer === a.answerer && x.date === a.date && x.text === a.text);
-                                    const bestBadge = isBest
-                                        ? `<span style="background:#f1c40f;color:#333;border-radius:10px;padding:2px 8px;font-size:0.75rem;margin-right:6px;">⭐ پاسخ برگزیده</span>`
-                                        : '';
-                                    const bestBtn = isAdmin && !isBest
-                                        ? `<button class="pick-best" data-qid="${q.id}" data-aidx="${origIdx}" style="background:#f39c12;color:white;border:none;border-radius:10px;padding:3px 10px;font-size:0.75rem;cursor:pointer;margin-top:6px;">⭐ انتخاب به عنوان پاسخ برگزیده</button>`
-                                        : '';
-                                    return `
-                                        <div class="answer-item" style="${isBest ? 'background:#fff9e0;border:2px solid #f1c40f;' : ''}">
-                                            <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:4px;">
-                                                ${bestBadge}
-                                                <strong style="color:#1f6e8c;">${escapeHtml(a.answerer)}</strong>
-                                                <small style="color:#888;">(${a.date})</small>
-                                            </div>
-                                            <p style="margin:4px 0;">${escapeHtml(a.text)}</p>
-                                            ${bestBtn}
+                        <button class="toggle-ans" data-id="${q.id}" style="background:#1f6e8c; color:white; border:none; padding:5px 12px; border-radius:15px; cursor:pointer;">📖 مشاهده پاسخ‌ها (${q.answers.length})</button>
+                        <div id="${answersDivId}" style="display:none; margin-top:10px;">
+                            <strong>پاسخ‌ها:</strong>
+                            ${q.answers.map(ans => `
+                                <div class="answer-item" style="margin-bottom:15px; border-bottom:1px dashed #ccc; padding-bottom:10px;">
+                                    <div><strong>${escapeHtml(ans.answerer)}:</strong> ${escapeHtml(ans.text)} <small>(${ans.date})</small></div>
+                                    
+                                    ${ans.replies && ans.replies.length > 0 ? ans.replies.map(reply => `
+                                        <div style="margin-right:20px; margin-top:5px; background:#f0f8ff; padding:5px 10px; border-radius:8px; border-right:3px solid #3498db;">
+                                            <strong>${escapeHtml(reply.answerer)}:</strong> ${escapeHtml(reply.text)} <small>(${reply.date})</small>
                                         </div>
-                                    `;
-                                }).join('')
-                            }
+                                    `).join('') : ''}
+                                    
+                                    <div style="margin-top:8px; display:flex; flex-wrap:wrap; gap:5px; align-items:center;">
+                                        <textarea id="reply-to-${ans.id}" rows="1" placeholder="پاسخ یا سوال جدید..." style="flex:1; min-width:150px; padding:5px; border-radius:8px; border:1px solid #ccc; font-family:inherit;"></textarea>
+                                        <button class="reply-to-answer" data-qid="${q.id}" data-aid="${ans.id}" style="padding:5px 12px; background:#3498db; color:white; border:none; border-radius:8px; cursor:pointer;">💬 پاسخ</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                            ${q.answers.length === 0 ? '<p>هنوز پاسخی داده نشده است.</p>' : ''}
                         </div>
                     </div>
                 `;
+                // ======================================================
 
-                // ---- فرم ارسال پاسخ (همه کاربران لاگین‌کرده) ----
-                let replySection = '';
-                if (loggedUser) {
-                    replySection = `
-                        <div style="margin-top:12px;">
-                            <textarea id="reply-${q.id}" rows="2" placeholder="پاسخ خود را بنویسید..." style="width:100%;padding:8px;border-radius:12px;border:1px solid #ccc;font-family:inherit;font-size:0.95rem;resize:vertical;"></textarea>
-                            <button class="reply-q" data-id="${q.id}" style="margin-top:5px;background:#2ecc71;color:white;border:none;border-radius:15px;padding:6px 14px;cursor:pointer;font-size:0.95rem;">✅ ارسال پاسخ</button>
-                        </div>
-                    `;
+                // دکمه پاسخ به سوال (فقط برای مدیر)
+                let replyBtn = '';
+                if (isAdmin) {
+                    replyBtn = `<div style="margin-top:10px;"><textarea id="reply-${q.id}" rows="2" placeholder="پاسخ خود را بنویسید..." style="width:100%; padding:8px; border-radius:12px; border:1px solid #ccc; font-family:inherit;"></textarea><button class="reply-q" data-id="${q.id}" style="margin-top:5px; background:#2ecc71; color:white; border:none; border-radius:15px; padding:6px 12px; cursor:pointer;">✅ ارسال پاسخ</button></div>`;
+                } else if (loggedUser) {
+                    replyBtn = `<p style="font-size:0.8rem; color:#7f8c8d; margin-top:10px;">💡 فقط مدیران می‌توانند پاسخ دهند.</p>`;
                 } else {
-                    replySection = `<p style="font-size:0.85rem;color:#7f8c8d;margin-top:10px;"><a href="login.html">وارد شوید</a> تا بتوانید پاسخ دهید.</p>`;
+                    replyBtn = `<p style="font-size:0.8rem; color:#7f8c8d; margin-top:10px;"><a href="login.html">وارد شوید</a> تا پاسخ دهید.</p>`;
                 }
 
+                // ساخت کارت سوال
                 card.innerHTML = `
-                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div class="question-title">${escapeHtml(q.title)}</div>
                         ${deleteBtn}
                     </div>
                     <div class="question-meta">پرسیده شده توسط: ${escapeHtml(q.asker)} | ${q.date}</div>
                     <div class="question-body">${escapeHtml(q.body)}</div>
                     ${answersHtml}
-                    ${replySection}
+                    ${replyBtn}
                 `;
                 container.appendChild(card);
             }
 
-            // ---- رویداد: نمایش/مخفی پاسخ‌ها ----
+            // ==============================================
+            // رویدادها (دکمه‌ها)
+            // ==============================================
+
+            // 1. دکمه مشاهده/مخفی کردن پاسخ‌ها
             document.querySelectorAll('.toggle-ans').forEach(btn => {
                 btn.onclick = () => {
                     const id = btn.getAttribute('data-id');
@@ -113,13 +103,12 @@ document.addEventListener('DOMContentLoaded', async function() {
                         btn.textContent = '🙈 مخفی کردن پاسخ‌ها';
                     } else {
                         div.style.display = 'none';
-                        const q = questions ? questions.find(x => String(x.id) === String(id)) : null;
-                        btn.textContent = `📖 مشاهده پاسخ‌ها (${q ? (q.answers || []).length : 0})`;
+                        btn.textContent = `📖 مشاهده پاسخ‌ها (${div.querySelectorAll('.answer-item').length})`;
                     }
                 };
             });
 
-            // ---- رویداد: حذف سوال ----
+            // 2. دکمه حذف سوال
             document.querySelectorAll('.delete-q').forEach(btn => {
                 btn.onclick = async () => {
                     const id = parseInt(btn.getAttribute('data-id'));
@@ -137,9 +126,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                 };
             });
 
-            // ---- رویداد: ارسال پاسخ (همه کاربران لاگین‌کرده) ----
+            // 3. دکمه پاسخ به سوال (فقط مدیر)
             document.querySelectorAll('.reply-q').forEach(btn => {
                 btn.onclick = async () => {
+                    if (!isAdmin) {
+                        alert('فقط مدیر می‌تواند پاسخ دهد.');
+                        return;
+                    }
                     const id = parseInt(btn.getAttribute('data-id'));
                     const textarea = document.getElementById(`reply-${id}`);
                     const answerText = textarea.value.trim();
@@ -147,79 +140,69 @@ document.addEventListener('DOMContentLoaded', async function() {
                         alert('لطفاً متن پاسخ را بنویسید.');
                         return;
                     }
-
-                    btn.disabled = true;
-                    btn.textContent = '⏳ در حال ارسال...';
-
-                    try {
-                        let questions = await fetchQuestions();
-                        const idx = questions.findIndex(x => x.id === id);
-                        if (idx === -1) return;
-                        questions[idx].answers.push({
-                            text: answerText,
-                            answerer: loggedUser,
-                            date: new Date().toLocaleString('fa-IR'),
-                            isBest: false
-                        });
-                        await saveQuestions(questions);
-                        textarea.value = '';
-                        loadQuestions();
-                    } catch(e) {
-                        alert('خطا در ارسال پاسخ. دوباره تلاش کنید.');
-                        btn.disabled = false;
-                        btn.textContent = '✅ ارسال پاسخ';
-                    }
+                    let questions = await fetchQuestions();
+                    const idx = questions.findIndex(x => x.id === id);
+                    if (idx === -1) return;
+                    
+                    // پاسخ جدید با قابلیت دریافت زیرپاسخ
+                    questions[idx].answers.push({
+                        id: Date.now(),
+                        text: answerText,
+                        answerer: loggedUser,
+                        date: new Date().toLocaleString('fa-IR'),
+                        replies: []  // ← اینجا آرایه خالی برای پاسخ‌های بعدی
+                    });
+                    await saveQuestions(questions);
+                    loadQuestions();
                 };
             });
 
-            // ---- رویداد: انتخاب پاسخ برگزیده (فقط ادمین) + امتیازدهی ----
-            document.querySelectorAll('.pick-best').forEach(btn => {
+            // 4. دکمه پاسخ به پاسخ (برای همه کاربران وارد شده)
+            document.querySelectorAll('.reply-to-answer').forEach(btn => {
                 btn.onclick = async () => {
-                    if (!isAdmin) return;
-                    const qid = parseInt(btn.getAttribute('data-qid'));
-                    const aidx = parseInt(btn.getAttribute('data-aidx'));
-
-                    btn.disabled = true;
-                    btn.textContent = '⏳ در حال ثبت...';
-
-                    try {
-                        let questions = await fetchQuestions();
-                        const qIdx = questions.findIndex(x => x.id === qid);
-                        if (qIdx === -1) return;
-
-                        // isBest همه پاسخ‌ها رو false کن
-                        questions[qIdx].answers.forEach(a => a.isBest = false);
-
-                        // پاسخ انتخاب‌شده رو best کن
-                        const chosenAnswer = questions[qIdx].answers[aidx];
-                        if (!chosenAnswer) return;
-                        chosenAnswer.isBest = true;
-
-                        // ---- +۱۰ امتیاز به صاحب پاسخ ----
-                        const winnerId = chosenAnswer.answerer;
-                        let users = await fetchUsers();
-                        const uIdx = users.findIndex(u => u.username === winnerId);
-                        if (uIdx !== -1) {
-                            users[uIdx].score = (users[uIdx].score || 0) + 10;
-                            await saveUsers(users);
-                        }
-
-                        await saveQuestions(questions);
-                        loadQuestions();
-                    } catch(e) {
-                        alert('خطا در ثبت پاسخ برگزیده. دوباره تلاش کنید.');
-                        btn.disabled = false;
-                        btn.textContent = '⭐ انتخاب به عنوان پاسخ برگزیده';
+                    if (!loggedUser) {
+                        alert('برای نظر دادن باید وارد شوید.');
+                        return;
                     }
+                    const questionId = parseInt(btn.getAttribute('data-qid'));
+                    const answerId = parseInt(btn.getAttribute('data-aid'));
+                    const textarea = document.getElementById(`reply-to-${answerId}`);
+                    const replyText = textarea.value.trim();
+                    if (!replyText) {
+                        alert('لطفاً متن خود را بنویسید.');
+                        return;
+                    }
+
+                    let questions = await fetchQuestions();
+                    const question = questions.find(q => q.id === questionId);
+                    if (!question) return;
+
+                    const answer = question.answers.find(a => a.id === answerId);
+                    if (!answer) return;
+
+                    // اگر آرایه replies وجود نداشت، بساز
+                    if (!answer.replies) answer.replies = [];
+
+                    answer.replies.push({
+                        id: Date.now(),
+                        text: replyText,
+                        answerer: loggedUser,
+                        date: new Date().toLocaleString('fa-IR')
+                    });
+
+                    await saveQuestions(questions);
+                    loadQuestions();
                 };
             });
 
         } catch (err) {
-            container.innerHTML = `<p style="color:red;text-align:center;">❌ خطا در بارگذاری اطلاعات از سرور.</p>`;
+            container.innerHTML = `<p style="color:red; text-align:center;">❌ خطا در بارگذاری اطلاعات از سرور.</p>`;
             console.error(err);
         }
     }
 
-    await seedSample();
+    // ==============================================
+    // بارگذاری اولیه سوالات (بدون سوالات نمونه)
+    // ==============================================
     await loadQuestions();
 });
